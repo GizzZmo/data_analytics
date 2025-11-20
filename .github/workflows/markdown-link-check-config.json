@@ -1,0 +1,22 @@
+{
+  "ignorePatterns": [
+    {
+      "pattern": "^https://user-images.githubusercontent.com"
+    },
+    {
+      "pattern": "^https://twitter.com"
+    },
+    {
+      "pattern": "^https://janisharali.com"
+    },
+    {
+      "pattern": "^https://www.youtube.com"
+    }
+  ],
+  "replacementPatterns": [],
+  "httpHeaders": [],
+  "timeout": "20s",
+  "retryOn429": true,
+  "retryCount": 5,
+  "fallbackRetryDelay": "30s"
+}
