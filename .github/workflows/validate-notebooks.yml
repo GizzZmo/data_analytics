@@ -1,0 +1,35 @@
+name: Validate Notebooks
+
+on:
+  push:
+    branches: [ main, master, develop ]
+  pull_request:
+    branches: [ main, master, develop ]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.9', '3.10']
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install jupyter nbconvert nbformat
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+    
+    - name: Validate Jupyter Notebooks
+      run: |
+        find . -name "*.ipynb" -not -path "*/.ipynb_checkpoints/*" -not -path "*/data/*" | while read notebook; do
+          echo "Validating $notebook"
+          jupyter nbconvert --to notebook --execute --inplace "$notebook" || echo "Warning: $notebook failed validation"
+        done

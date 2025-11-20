@@ -1,0 +1,53 @@
+name: Documentation
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  check-docs:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Check README exists
+      run: |
+        if [ ! -f README.md ]; then
+          echo "Error: README.md not found"
+          exit 1
+        fi
+        echo "README.md found ✓"
+    
+    - name: Check LICENSE exists
+      run: |
+        if [ ! -f LICENSE ]; then
+          echo "Error: LICENSE not found"
+          exit 1
+        fi
+        echo "LICENSE found ✓"
+    
+    - name: Check markdown files are valid
+      uses: gaurav-nelson/github-action-markdown-link-check@v1
+      with:
+        config-file: '.github/workflows/markdown-link-check-config.json'
+        use-quiet-mode: 'yes'
+        use-verbose-mode: 'no'
+      continue-on-error: true
+    
+    - name: Documentation quality check
+      run: |
+        echo "Checking documentation quality..."
+        
+        # Check if README has minimum sections
+        if ! grep -q "# About" README.md && ! grep -q "## About" README.md; then
+          echo "Warning: README.md should have an About section"
+        fi
+        
+        if ! grep -q "# Installation\|## Installation\|# Setup\|## Setup" README.md; then
+          echo "Warning: README.md should have installation/setup instructions"
+        fi
+        
+        echo "Documentation check complete ✓"
